@@ -40,16 +40,30 @@ public class Main
         ArrayList<Long> dtstampsCleaned = new ArrayList<>();
 
         // finding each instance of "SUMMARY:" & "DTEND:" to add to respective arraylists
+        String assignmentClass = new String();
         for (String event : convertedCalendar) {
             if (event == null) continue;
+
+            // grabbing "location," which should be the class name (or location) and puts it into the assignmentClass string
             for (String line : event.split("\\r?\\n")) {
-                if (line.startsWith("SUMMARY:")) {
-                    int start = "SUMMARY:".length();
-                    assignmentName.add(line.substring(start).trim());
-                    break; // stop after first DTEND in this event
+                if (line.startsWith("LOCATION:")) {
+                    int start = "LOCATION:".length();
+                    assignmentClass = line.substring(start).trim();
+                    break; // stop after first LOCATION in this event
                 }
             }
 
+            // grabbing "summary," which should be what assignment it is and appends it onto the assignmentName arraylist as "Class | Assignment"
+            for (String line : event.split("\\r?\\n")) {
+                if (line.startsWith("SUMMARY:")) {
+                    int start = "SUMMARY:".length();
+                    assignmentClass = assignmentClass + " | " + line.substring(start).trim();
+                    assignmentName.add(assignmentClass);
+                    break; // stop after first SUMMARY in this event
+                }
+            }
+
+            // grabbing "DTEND," which should be when the assignment is due (?) and uses it as the key for the treemap later on
             for (String line : event.split("\\r?\\n")) {
                 if (line.startsWith("DTEND:")) {
                     int start = "DTEND:".length();
