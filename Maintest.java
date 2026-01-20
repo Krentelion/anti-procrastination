@@ -10,11 +10,77 @@ import java.util.TreeMap;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.component.VEvent;
 
-public class Main 
+public class Maintest{
+
+    //replaces TreeMap
+    static class Assignment{
+        String name;  //"Class | Assignment"
+        ZonedDateTime due; //exact due date
+    }
+    /*
+      load ics file. ical4j parses and builds Calendar object
+    */
+    FileInputStream fin = new FileInputStream("feed2.ics");
+    CalendarBuilder builder = new CalendarBuilder();
+    Calendar calendar = builder.build(fin);
+
+
+   /*
+    Extract VEvent obj. shows summary, location, dtend, etc.
+   */
+
+    List<VEvent> assignmentEvents = new ArrayList<>();
+
+    for (Component c : calendar.getComponents(Component.VEVENT)){
+        assignmentEvents.add((VEvent) c);
+    }
+
+    /*
+    Convert VEvents to assignment obj. replaces string parsing.
+    */
+
+    List<Assignment> assignments = new ArrayList<>();
+
+    for (VEvent event : assignmentEvents) {
+
+        Assignment assignment = new Assignment();
+
+        //class name
+        /*String location = event.getLocation() != null
+                ? event.getLocation().getValue()
+                : "Unknown Class";*/ 
+        String location;
+        if (event.getLocation() != null) {
+            location = event.getLocation().getValue();
+        } else {
+            location = "Unknown Class";
+        } 
+        //assignment title
+        String summary;
+        if (summary.getSummary() != null) {
+            location = event.getSummary().getValue();
+        } else {
+            location = "Unknown Assignment";
+        } 
+        assignment.name = location + " | " + summary;
+
+        //DTEND -> due date. already parsed into Date but convert to ZonedDateTime just in case
+        EndDate endDate = event.getEndDate();
+        Date date = endDate.getDate();
+        Instant instant = date.toInstant();
+        assignment.due = instant.atZone(ZoneId.systemDefault());
+
+        assingments.add(assignment);
+    }
+}
+
+
+/*public class Maintest
 {
     // for now redundant as program is assuming the .ics file is in working directory
-    public String fileLocation = inputOutput.acquireFile();
+    //public String fileLocation = inputOutput.acquireFile();
 
     public static void main(String[] args) throws Exception
     {
