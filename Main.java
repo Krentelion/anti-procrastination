@@ -14,7 +14,7 @@ import net.fortuna.ical4j.model.Calendar;
 public class Main 
 {
     // for now redundant as program is assuming the .ics file is in working directory
-    public String fileLocation = inputOutput.acquireFile();
+    //public String fileLocation = inputOutput.acquireFile();
 
     public static void main(String[] args) throws Exception
     {
