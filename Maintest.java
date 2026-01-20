@@ -11,14 +11,21 @@ import java.util.TreeMap;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.property.DateProperty;
+
+
 
 public class Maintest{
 
-    //replaces TreeMap
     static class Assignment{
         String name;  //"Class | Assignment"
         ZonedDateTime due; //exact due date
     }
+    public static void main(String[] args) throws Exception
+    {
+    //replaces TreeMap
+    
     /*
       load ics file. ical4j parses and builds Calendar object
     */
@@ -59,21 +66,23 @@ public class Maintest{
         } 
         //assignment title
         String summary;
-        if (summary.getSummary() != null) {
-            location = event.getSummary().getValue();
+        if (event.getSummary() != null) {
+            summary = event.getSummary().getValue();
         } else {
-            location = "Unknown Assignment";
+            summary = "Unknown Assignment";
         } 
         assignment.name = location + " | " + summary;
 
         //DTEND -> due date. already parsed into Date but convert to ZonedDateTime just in case
-        EndDate endDate = event.getEndDate();
-        Date date = endDate.getDate();
-        Instant instant = date.toInstant();
-        assignment.due = instant.atZone(ZoneId.systemDefault());
+        DateProperty endDate = event.getEndDate();
+        if (endDate != null) {
+            Instant instant = endDate.getDate().toInstant();
+            assignment.due = instant.atZone(ZoneId.systemDefault());
+        }
 
-        assingments.add(assignment);
+        assignments.add(assignment);
     }
+}
 }
 
 
